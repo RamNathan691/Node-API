@@ -6,15 +6,20 @@ const {
   deleteBootcamps,
   createBootcamps,
   updateBootcamps,
-  getBootcampsInRadius
+  getBootcampsInRadius,
+  bootcampPhotoUpload
 } = require('../controllers/bootcamps')
+// we are using the advanced middleware here
+const Bootcamp = require('../models/Bootcamps')
+const advancedResults = require('../middleware/advancedResult')
 // Include other model routers also
 const courseRouter = require('./courses')
 // Reroute into the other resource routers
 router.use('/:bootcampId/courses', courseRouter)
+router.route('/:id/photo').put(bootcampPhotoUpload)
 router
   .route('/')
-  .get(getBootcamps)
+  .get(advancedResults(Bootcamp, 'courses'), getBootcamps)
   .post(createBootcamps)
 router.route('/:id')
   .get(getBootcamps1)
