@@ -5,11 +5,14 @@ const dotenv = require('dotenv')
 const morgan = require('morgan')
 const connectDB = require('./config/db')
 const colors = require('colors')
+const cookieParser = require('cookie-parser');
 const ErrorHandler = require('./middleware/error')
 const fileupload = require('express-fileupload')
 const path = require('path')
 // const bodyParser = require('body-parser')
 const app = express()
+// adding the cookie-parser middle
+// it can be used using the app.use() function
 // load env
 dotenv.config({ path: './config/config.env' })
 // connect Database
@@ -19,6 +22,8 @@ app.use(fileupload())
 // setting the public Folder
 app.use(express.static(path.join(__dirname, 'public')))
 // requiring routes
+app.use(cookieParser());
+
 const bootcamps = require('./routes/bootcamps')
 const course = require('./routes/courses')
 const auth = require('./routes/auth')
