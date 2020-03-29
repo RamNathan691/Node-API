@@ -10,7 +10,7 @@ const {
   bootcampPhotoUpload
 } = require('../controllers/bootcamps')
 // bringing in the protect middleware
-const { protect } = require('../middleware/auth')
+const { protect, authorize } = require('../middleware/auth')
 // we are using the advanced middleware here
 const Bootcamp = require('../models/Bootcamps')
 const advancedResults = require('../middleware/advancedResult')
@@ -18,15 +18,15 @@ const advancedResults = require('../middleware/advancedResult')
 const courseRouter = require('./courses')
 // Reroute into the other resource routers
 router.use('/:bootcampId/courses', courseRouter)
-router.route('/:id/photo').put(protect, bootcampPhotoUpload)
+router.route('/:id/photo').put(protect, authorize('publisher', 'admin'), bootcampPhotoUpload)
 router
   .route('/')
   .get(advancedResults(Bootcamp, 'courses'), getBootcamps)
-  .post(protect, createBootcamps)
+  .post(protect, authorize('publisher', 'admin'), createBootcamps)
 router
   .route('/:id')
   .get(getBootcamps1)
-  .put(protect, updateBootcamps)
-  .delete(protect, deleteBootcamps)
+  .put(protect, authorize('publisher', 'admin'), updateBootcamps)
+  .delete(protect, authorize('publisher', 'admin'), deleteBootcamps)
 router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius)
 module.exports = router

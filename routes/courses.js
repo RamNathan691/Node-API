@@ -8,7 +8,7 @@ const {
   deleteCourse
 
 } = require('../controllers/course')
-const { protect } = require('../middleware/auth')
+const { protect, authorize } = require('../middleware/auth')
 const Course = require('../models/Course')
 const advancedResults = require('../middleware/advancedResult')
 router.route('/').get(advancedResults(Course, {
@@ -18,8 +18,8 @@ router.route('/').get(advancedResults(Course, {
 router
   .route('/:id')
   .get(getCourse)
-  .put(protect, updateCourse)
-  .delete(protect, deleteCourse)
-router.route('/').post(protect, addCourse)
+  .put(protect, authorize('publisher', 'admin'), updateCourse)
+  .delete(protect, authorize('publisher', 'admin'), deleteCourse)
+router.route('/').post(protect, authorize('publisher', 'admin'), addCourse)
 
 module.exports = router
