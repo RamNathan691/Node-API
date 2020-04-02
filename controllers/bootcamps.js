@@ -126,6 +126,7 @@ exports.getBootcampsInRadius = AsyncHandler(async (req, res, next) => {
 // @access Private
 exports.bootcampPhotoUpload = AsyncHandler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id)
+  console.log(bootcamp)
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)

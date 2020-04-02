@@ -20,7 +20,10 @@ const CourseSchema = new mongoose.Schema({
   },
   minimumSkill: {
     type: String,
-    required: [true, 'Please add the minimum skill required to enroll in this Bootcamp'],
+    required: [
+      true,
+      'Please add the minimum skill required to enroll in this Bootcamp'
+    ],
     enum: ['beginner', 'intermediate', 'advanced']
   },
   scholarshipAvailable: {
@@ -35,8 +38,13 @@ const CourseSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: 'Bootcamp',
     required: true
+  },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true
   }
-})
+});
 // Static method to get the average of course tuitions
 CourseSchema.statics.getAverageCost = async function (bootcampId) {
   console.log('Calculating the average Cost..'.blue)
@@ -65,7 +73,7 @@ CourseSchema.statics.getAverageCost = async function (bootcampId) {
 CourseSchema.post('save', function () {
   this.constructor.getAverageCost(this.bootcamp)
 })
-//  CALL getAverageCost once "A" has been delete we need to recompute the data of the averageCost
+//  CALL getAverageCost once 'A' has been delete we need to recompute the data of the averageCost
 CourseSchema.pre('save', function () {
   this.constructor.getAverageCost(this.bootcamp)
 })
