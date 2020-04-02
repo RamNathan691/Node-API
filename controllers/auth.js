@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const ErrorResponse = require('../utils/errorResponse')
 const AsyncHandler = require('../middleware/async')
+const sendEmail = require('../utils/sendEmail')
 // ---------------------------
 // @desc Register user
 // @route POST/api/v1/auth/register
@@ -48,6 +49,51 @@ exports.login = AsyncHandler(async (req, res, next) => {
 })
 // -----------------------------------------------------------------------
 
+// @ desc Get the current logged in user
+// @route Post/api/v1/auth/me
+exports.getMe = AsyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id)
+  res.status(200).json({
+    success: true,
+    data: user
+  })
+})
+
+// @ desc Forgot the Password
+// @route Post/api/v1/auth/forgotPassword
+// @access Public
+exports.forgotPassword = AsyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email })
+  if (!user) {
+    return next(new ErrorResponse('There is no user in the email that has been enters Sorry!!', 404))
+  }
+  // Get the reset token
+  const resetToken = user.getResetPasswordToken()
+  await user.save({ validateBeforeSave: false })
+  // create reset url
+  const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/resetPassword/${resetToken}`
+  const message = `You are recieving this email because you(or someone else) has requestd
+  the reset of a password.Please make a PUT request to:\n\n ${resetUrl}`
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Password reset Token',
+      message
+    })
+    res.status(200).json({ success: true, data: 'Email.sent' })
+  }catch (Err) {
+    console.log(Err)
+    user.resetPasswordToken = undefined
+    user.resetPasswordExpire = undefined
+    await user.save({ validateBeforeSave : false})
+    return next(new ErrorResponse('Email could not be sent',500))
+  }
+  res.status(200).json({
+    success: true,
+    data: user
+  })
+})
+
 // Get token and cookie and send the response as it has been used in the
 // different routes successfully
 const sendTokenResponse = (user, statusCode, res) => {
@@ -67,13 +113,3 @@ const sendTokenResponse = (user, statusCode, res) => {
       token
     })
 }
-
-// @ desc Get the current logged in user
-// @route Post/api/v1/auth/me
-exports.getMe = AsyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id)
-  res.status(200).json({
-    success: true,
-    data: user
-  })
-})
