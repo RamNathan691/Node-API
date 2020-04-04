@@ -4,8 +4,10 @@ const {
   login,
   getMe,
   forgotPassword,
-  resetPassword
-} = require('../controllers/auth');
+  resetPassword,
+  updateDetails,
+  updatepassword
+} = require('../controllers/auth')
 const { protect } = require('../middleware/auth')
 const router = express.Router()
 router
@@ -13,5 +15,9 @@ router
   .post('/login', login)
   .get('/getme', protect, getMe)
   .post('/forgotPassword', forgotPassword)
-  .put('/resetPassword/:resetToken', resetPassword);
+  .put('/resetPassword/:resetToken', resetPassword)
+  .put('/updatedetails', protect, updateDetails)
+  .put('/updatepassword', protect, updatepassword)
+  
+
 module.exports = router

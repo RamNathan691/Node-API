@@ -59,6 +59,37 @@ exports.getMe = AsyncHandler(async (req, res, next) => {
     data: user
   })
 })
+// @ desc UPDATE USER DETAILS
+// @route PUT/api/v1/auth/UPDATEDETAILS
+exports.updateDetails = AsyncHandler(async (req, res, next) => {
+  const fieldToUpdate = {
+    name: req.body.name,
+    email: req.body.email
+  }
+
+  const user = await User.findByIdAndUpdate(req.user.id, fieldToUpdate, {
+    new: true,
+    runValidators: true
+  })
+  res.status(200).json({
+    success: true,
+    data: user
+  })
+})
+// @ desc UPDATE user password
+// @route PUT/api/v1/auth/updatepassword
+exports.updatepassword = AsyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password')
+  //check if the password match
+  if (!(await user.matchPassword(req.body.currentPassword))) {
+    return next(
+      new ErrorResponse('Incorrect Password', 401)
+    )
+  }
+  user.password = req.body.newPassword
+  await user.save()
+  sendTokenResponse(user,200,res)
+})
 
 // @ desc Forgot the Password
 // @route Post/api/v1/auth/forgotPassword
@@ -98,9 +129,9 @@ exports.forgotPassword = AsyncHandler(async (req, res, next) => {
 // @route PUT/api/v1/auth/resetPassword/:resetToken
 exports.resetPassword = AsyncHandler(async (req, res, next) => {
   const resetPasswordToken = crypto
-    .createHash("sha256")
+    .createHash('sha256')
     .update(req.params.resetToken)
-    .digest("hex");
+    .digest('hex')
   const user = await User.findOne({
     resetPasswordToken,
     resetPasswordExpire: { $gt: Date.now() }
@@ -114,8 +145,8 @@ exports.resetPassword = AsyncHandler(async (req, res, next) => {
   user.password = req.body.password
   user.resetPasswordToken = undefined
   user.resetPasswordExpire = undefined
-  await user.save() 
-  sendTokenResponse(user, 200, res);
+  await user.save()
+  sendTokenResponse(user, 200, res)
 })
 // Get token and cookie and send the response as it has been used in the
 // different routes successfully
