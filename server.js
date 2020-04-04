@@ -27,7 +27,7 @@ app.use(cookieParser());
 const bootcamps = require('./routes/bootcamps')
 const course = require('./routes/courses')
 const auth = require('./routes/auth')
-
+const users = require('./routes/users')
 // Dev logging middleware
 app.use(express.json())
 if (process.env.NODE_ENV === 'development') {
@@ -37,6 +37,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/v1/bootcamps', bootcamps)
 app.use('/api/v1/courses', course)
 app.use('/api/v1/auth', auth)
+app.use('/api/v1/users',users)
 // Using the error Hanlder
 app.use(ErrorHandler)
 // PORT
