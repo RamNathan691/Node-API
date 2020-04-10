@@ -5,7 +5,6 @@ const {
   createUser,
   UpdateUser,
   DeleteUser
-
 } = require('../controllers/users')
 const User = require('../models/User')
 const advancedResults = require('../middleware/advancedResult')
@@ -15,10 +14,7 @@ router.use(protect)
 router.use(authorize('admin'))
 router
   .route('/').get(advancedResults(User), getUsers)
-  .post(createUser)
-router
-  .route('/:id')
-  .get(getUser)
-  .put(updateUser)
+router.route('/').post(createUser)
+router.route("/:id").get(getUser).put(UpdateUser).delete(DeleteUser);
 
 module.exports = router

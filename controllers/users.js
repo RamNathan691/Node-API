@@ -1,7 +1,7 @@
 const User = require('../models/User')
 const ErrorResponse = require('../utils/errorResponse')
 const AsyncHandler = require('../middleware/async')
-const sendEmail = require('../utils/sendEmail')
+
 
 // @desc Get all the user
 // @route Get/api/v1/auth/users
@@ -21,25 +21,25 @@ exports.getUser = AsyncHandler(async (req, res, next) => {
   })
 })
 
-
 // @desc Create user
 // @route POST/api/v1/auth/users
 // @access Private/Admin
 exports.createUser = AsyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.params.id)
-  res.status(200).json({
+  const user = await User.create(req.body);
+
+  res.status(201).json({
     success: true,
     data: user
-  })
-})
+  });
+});
 
 // @desc Update user
 // @route POST/api/v1/auth/users/:id
 // @access Private/Admin
 exports.UpdateUser = AsyncHandler(async (req, res, next) => {
-  const user = await User.findByIdAndUpdate(req.params.id,req.body{
-      new:true,
-      runValidators:true
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
   })
   res.status(200).json({
     success: true,

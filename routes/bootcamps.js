@@ -16,8 +16,10 @@ const Bootcamp = require('../models/Bootcamps')
 const advancedResults = require('../middleware/advancedResult')
 // Include other model routers also
 const courseRouter = require('./courses')
+const reviewRouter = require('./reviews')
 // Reroute into the other resource routers
 router.use('/:bootcampId/courses', courseRouter)
+router.use('/:bootcampId/reviews',reviewRouter)
 router.route('/:id/photo').put(protect, authorize('publisher', 'admin'), bootcampPhotoUpload)
 router
   .route('/')
