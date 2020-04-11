@@ -12,6 +12,9 @@ const path = require('path')
 const mongoSanitize = require("express-mongo-sanitize");// const bodyParser = require('body-parser')
 const helmets = require('helmet');// const bodyParser = require('body-parser')
 const xss = require('xss-clean')
+const rateLimit = require('express-rate-limit')
+const hpp = require('hpp');
+const cors = require('cors');
 const app = express()
 // adding the cookie-parser middle
 // it can be used using the app.use() function
@@ -45,6 +48,16 @@ app.use(mongoSanitize());
 app.use(helmets())
 // prevent from adding the script tag anywhere in the websites
 app.use(xss())
+// Rate Limiting
+const limiter = rateLimit({
+  windows: 10*60*1000, //10 mins
+  max:1
+})
+app.use(limiter)
+// Prevent Http param pollution
+app.use(hpp())
+// using CORS so that the other domains can use them 
+app.use(cors())
 // mount routes
 app.use('/api/v1/bootcamps', bootcamps)
 app.use('/api/v1/courses', course)
