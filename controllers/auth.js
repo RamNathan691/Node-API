@@ -49,7 +49,15 @@ exports.login = AsyncHandler(async (req, res, next) => {
 //   res.status(200).json({ success: true, token: token })
 })
 // -----------------------------------------------------------------------
-
+// @ desc Get the current logged in user
+// @route Post/api/v1/auth/me
+exports.getMe = AsyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id)
+  res.status(200).json({
+    success: true,
+    data: user
+  })
+})
 // @ desc Get the current logged in user
 // @route Post/api/v1/auth/me
 exports.getMe = AsyncHandler(async (req, res, next) => {

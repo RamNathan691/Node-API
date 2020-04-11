@@ -19,7 +19,7 @@ const courseRouter = require('./courses')
 const reviewRouter = require('./reviews')
 // Reroute into the other resource routers
 router.use('/:bootcampId/courses', courseRouter)
-router.use('/:bootcampId/reviews',reviewRouter)
+router.use('/:bootcampId/reviews', reviewRouter)
 router.route('/:id/photo').put(protect, authorize('publisher', 'admin'), bootcampPhotoUpload)
 router
   .route('/')
