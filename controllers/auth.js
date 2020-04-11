@@ -49,13 +49,17 @@ exports.login = AsyncHandler(async (req, res, next) => {
 //   res.status(200).json({ success: true, token: token })
 })
 // -----------------------------------------------------------------------
-// @ desc Get the current logged in user
-// @route Post/api/v1/auth/me
-exports.getMe = AsyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id)
+// @ desc To Logout the current User
+// @route GET/api/v1/auth/Logout
+exports.logOut = AsyncHandler(async (req, res, next) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  })
+
   res.status(200).json({
     success: true,
-    data: user
+    data: {}
   })
 })
 // @ desc Get the current logged in user
@@ -88,7 +92,7 @@ exports.updateDetails = AsyncHandler(async (req, res, next) => {
 // @route PUT/api/v1/auth/updatepassword
 exports.updatepassword = AsyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.id).select('+password')
-  //check if the password match
+  // check if the password match
   if (!(await user.matchPassword(req.body.currentPassword))) {
     return next(
       new ErrorResponse('Incorrect Password', 401)
@@ -96,7 +100,7 @@ exports.updatepassword = AsyncHandler(async (req, res, next) => {
   }
   user.password = req.body.newPassword
   await user.save()
-  sendTokenResponse(user,200,res)
+  sendTokenResponse(user, 200, res)
 })
 
 // @ desc Forgot the Password

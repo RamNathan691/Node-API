@@ -5,11 +5,13 @@ const User = require('../models/User')
 
 exports.protect = AsyncHandler(async (req, res, next) => {
   let token
+  // the if part is setting token in the Bearer that means in the header
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1]
-  } else if (req.cookies.token) {
-    token = req.cookies.token
-  }
+  }// This else if part is used to set the token in the cookies 
+  // else if (req.cookies.token) {
+  //   token = req.cookies.token
+  // }
 
   // To ensure that the token exists
   if (!token) {
